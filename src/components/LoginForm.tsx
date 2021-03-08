@@ -13,6 +13,8 @@ const useStyles = makeStyles({
 
 const LoginForm: React.FC<LoginFormProps> = () => {
   const classes = useStyles();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <form autoComplete="off">
@@ -22,6 +24,8 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         name="email"
         label="Email"
         fullWidth
+        onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <TextField
         className={classes.root}
@@ -29,7 +33,10 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         variant="outlined"
         name="password"
         label="Password"
+        type="password"
         fullWidth
+        onChange={(e) => setPassword(e.target.value)}
+        required
       />
       <Button
         style={{ borderRadius: 0, marginTop: 10 }}
