@@ -3,6 +3,9 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
+import validate from "../services/validationService";
+import Toast from "./Toast";
+
 export interface LoginFormProps {}
 
 const useStyles = makeStyles({
@@ -16,8 +19,27 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { error } = validate.input({ email, password });
+
+    if (error) return <Toast content={error.toString()} error={true} />;
+
+    try {
+      const { data } = await validate.login({ email, password });
+
+      localStorage.setItem("token", data);
+      setTimeout(() => {
+        window.location.replace("/profile");
+      }, 1000);
+    } catch (ex) {
+      return <Toast content={ex.data.toString()} error={true} />;
+    }
+  };
+
   return (
-    <form autoComplete="off">
+    <form autoComplete="off" onSubmit={handleSubmit}>
       <TextField
         className={classes.root}
         variant="outlined"
