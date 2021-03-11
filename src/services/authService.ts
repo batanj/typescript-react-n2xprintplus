@@ -7,7 +7,7 @@ const getUser = () => {
   const token = getToken();
 
   if (!token) {
-    return null;
+    return {};
   }
 
   try {
@@ -15,7 +15,7 @@ const getUser = () => {
     return user;
   } catch (ex) {
     // console.log(ex);
-    return null;
+    return {};
   }
 };
 
@@ -23,7 +23,9 @@ const getToken = () => {
   return localStorage.getItem("token");
 };
 
-const logoutUser = async (user: User) => {
+const logoutUser = async (user: User | null) => {
+  if (null) return;
+
   try {
     await http.post(config.apiEndpoint + "auth/logout", user);
   } catch (error) {
