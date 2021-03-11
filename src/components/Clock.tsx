@@ -17,7 +17,7 @@ export default function Clock() {
 
   return (
     <span>
-      {getTime(time)} {ampm(time)}
+      &nbsp;{getTime(time)} {ampm(time)}
     </span>
   );
 }
