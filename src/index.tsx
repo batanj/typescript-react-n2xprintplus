@@ -5,6 +5,20 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
+
+Sentry.init({
+  dsn:
+    "https://4b30592d2eda49ed8ba99090fdfcf398@o489899.ingest.sentry.io/5552915",
+  autoSessionTracking: true,
+  integrations: [new Integrations.BrowserTracing()],
+
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0,
+});
+
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
