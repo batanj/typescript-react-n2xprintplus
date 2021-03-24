@@ -1,3 +1,3 @@
 {
-    "apiEndpoint": "https://n2xprintplus-backend.herokuapp.com/api/"
+    "apiEndpoint": "http://api.n2xprintplus.batanj.dev/"
 }
