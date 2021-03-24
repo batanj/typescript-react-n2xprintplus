@@ -24,7 +24,7 @@ const getToken = () => {
 };
 
 const logoutUser = async (user: User | null) => {
-  if (null) return;
+  if (user === null) return;
 
   try {
     await http.post(config.apiEndpoint + "auth/logout", user);
