@@ -34,7 +34,13 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         window.location.replace("/");
       }, 1000);
     } catch (ex) {
-      return <Toast content={ex.data.toString()} error={true} />;
+      let err;
+
+      if (typeof ex === "string") err = ex;
+
+      if (ex.data) err = ex.data.toString();
+
+      return <Toast content={err} error={true} />;
     }
   };
 
