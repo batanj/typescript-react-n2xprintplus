@@ -31,7 +31,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
       localStorage.setItem("token", data);
       setTimeout(() => {
-        window.location.replace("/profile");
+        window.location.replace("/");
       }, 1000);
     } catch (ex) {
       return <Toast content={ex.data.toString()} error={true} />;
