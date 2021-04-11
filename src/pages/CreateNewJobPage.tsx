@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -9,11 +9,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Box from "@material-ui/core/Box";
 import ArrowRightSharp from "@material-ui/icons/ArrowRightSharp";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@material-ui/core/Typography";
 
 import PageNavigation from "../components/PageNavigation";
 
-import Service from "../types/Service";
-import services from "../services/servicesService";
 import Scan from "../components/Scan";
 import Sticker from "../components/Sticker";
 import Photocopy from "../components/Photocopy";
@@ -21,6 +20,11 @@ import Lamination from "../components/Lamination";
 import TshirtPrinting from "../components/TshirtPrinting";
 import RisoDuplo from "../components/RisoDuplo";
 import TarpaulinPrinting from "../components/TarpaulinPrinting";
+
+import authService from "../services/authService";
+import Service from "../types/Service";
+import services from "../services/servicesService";
+import UserContext from "../contexts/UserContext";
 
 const useStyles = makeStyles({
   root: {
@@ -72,6 +76,7 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
     services: [],
     service: {},
   });
+  const user = useContext(UserContext);
 
   useEffect(() => {
     const getServices = async () => {
@@ -81,7 +86,9 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
         const service = data[0];
 
         setState({ services: data, service });
-      } catch (error) {}
+      } catch (error) {
+        authService.logoutUser(user);
+      }
     };
 
     getServices();
@@ -90,7 +97,7 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
     //     .then((result) => {
     //         setState({ ...state, prices: result.data });
     //     });
-  }, []);
+  }, [user]);
 
   const resetSelected = () => {
     let services = [...state.services];
@@ -175,9 +182,9 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
   return (
     <>
       <PageNavigation {...props} />
-      <Container maxWidth="md" style={{ marginTop: 70, textAlign: "center" }}>
+      <Container maxWidth="xl" style={{ marginTop: 70, textAlign: "center" }}>
         <Grid container>
-          <Grid container item sm={4}>
+          <Grid container item md={3}>
             <List component="nav" aria-label="job menu" className={styles.root}>
               {state.services &&
                 state.services.map((service) => (
@@ -219,8 +226,11 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
                 ))}
             </List>
           </Grid>
-          <Grid item sm={8} style={{ padding: 10, textAlign: "left" }}>
+          <Grid item md={5} style={{ padding: 10, textAlign: "left" }}>
             {state.service && renderSwitch(state.service.slug!)}
+          </Grid>
+          <Grid item md={4} style={{ padding: 10, textAlign: "left" }}>
+            <Typography>Job Order Summary</Typography>
           </Grid>
         </Grid>
       </Container>
