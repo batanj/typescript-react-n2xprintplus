@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export interface ToastProps {
   content: string;
@@ -14,7 +15,6 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
   useEffect(() => {
     const message = () => {
-      console.log("toast?");
       if (error) return toast.error(content, { autoClose: 3000 });
       return toast.success(content, { autoClose: 3000 });
     };
