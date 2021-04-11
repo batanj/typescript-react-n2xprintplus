@@ -50,10 +50,18 @@ const App = () => {
           }}
         />
         <Route
-          path="/search-customer"
+          path="/customers/search"
           render={(props) => {
             if (doneFetching && isEmpty(user)) return <Redirect to="/" />;
             return <SearchExistingCustomerPage {...props} />;
+          }}
+        />
+        <Route
+          path="/customers/add"
+          exact
+          render={(props: RouteComponentProps) => {
+            if (doneFetching && isEmpty(user)) return <Redirect to="/" />;
+            return <AddCustomerPage {...props} />;
           }}
         />
         <Route
@@ -61,14 +69,6 @@ const App = () => {
           render={(props) => {
             if (doneFetching && isEmpty(user)) return <Redirect to="/" />;
             return <SearchExistingCustomerPage {...props} />;
-          }}
-        />
-        <Route
-          path="/add-new-customer"
-          exact
-          render={(props: RouteComponentProps) => {
-            if (doneFetching && isEmpty(user)) return <Redirect to="/" />;
-            return <AddCustomerPage {...props} />;
           }}
         />
         <Route
