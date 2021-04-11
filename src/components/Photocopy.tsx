@@ -35,6 +35,7 @@ const useStyles = makeStyles({
       },
     },
   },
+  btn: { marginTop: 40, textAlign: "left" },
 });
 
 type PhotocopyDetails = {
@@ -137,7 +138,7 @@ const Photocopy: React.FC<PhotocopyProps> = ({
         </Typography>
       </Grid>
       <Grid container>
-        <Grid item sm={12} style={{ marginTop: 40, textAlign: "center" }}>
+        <Grid item sm={12} className={styles.btn}>
           <Button
             variant="contained"
             color="primary"

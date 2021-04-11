@@ -18,6 +18,7 @@ const useStyles = makeStyles({
   button: {
     borderRadius: 0,
   },
+  btn: { marginTop: 40, textAlign: "left" },
 });
 
 export interface StickerProps {
@@ -50,7 +51,7 @@ const Sticker: React.FC<StickerProps> = ({ handleSubmit, handleComplete }) => {
         </Typography>
       </Grid>
       <Grid container>
-        <Grid item sm={12} style={{ marginTop: 40, textAlign: "center" }}>
+        <Grid item sm={12} className={styles.btn}>
           <Button
             variant="contained"
             color="primary"

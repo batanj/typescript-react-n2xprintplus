@@ -29,6 +29,7 @@ const useStyles = makeStyles({
   button: {
     borderRadius: 0,
   },
+  btn: { marginTop: 40, textAlign: "left" },
 });
 
 export interface RisoDuploProps {
@@ -155,7 +156,7 @@ const RisoDuplo: React.FC<RisoDuploProps> = ({
         </Typography>
       </Grid>
       <Grid container>
-        <Grid item sm={12} style={{ marginTop: 40, textAlign: "center" }}>
+        <Grid item sm={12} className={styles.btn}>
           <Button
             variant="contained"
             color="primary"
