@@ -1,111 +1,51 @@
-import React, { useContext, useState } from "react";
-import {
-  IconButton,
-  Divider,
-  Menu,
-  MenuItem,
-  Box,
-  ListItemIcon,
-} from "@material-ui/core";
-import {
-  FaceSharp,
-  PersonAddSharp,
-  SearchSharp,
-  AccountBoxSharp,
-  ScheduleSharp,
-  MeetingRoomSharp,
-} from "@material-ui/icons";
+import React, { useContext } from "react";
+import AccountBoxSharp from "@material-ui/icons/AccountBoxSharp";
+import ScheduleSharp from "@material-ui/icons/ScheduleSharp";
+import MeetingRoomSharp from "@material-ui/icons/MeetingRoomSharp";
+import Button from "@material-ui/core/Button";
+import makeStyles from "@material-ui/styles/makeStyles";
 import auth from "../services/authService";
 import UserContext from "../contexts/UserContext";
 import { RouteComponentProps } from "react-router-dom";
 
+const useStyles = makeStyles({
+  btn: { borderRadius: 0, border: "1px solid lightgray" },
+  btnRed: { borderColor: "red" },
+  btnMargin: { marginLeft: 10 },
+});
+
 const NavMenu: React.FC<RouteComponentProps> = ({ ...props }) => {
   const user = useContext(UserContext);
   const { history } = props;
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const menuItems = [
-    {
-      label: "Add New Customer",
-      onClick: () => {
-        history.push("/customers/add-new");
-        setAnchorEl(null);
-      },
-      icon: <PersonAddSharp />,
-    },
-    {
-      label: "Search Existing Customer",
-      onClick: () => {
-        history.push("/customers/search");
-        setAnchorEl(null);
-      },
-      icon: <SearchSharp />,
-    },
-    {
-      label: "divider",
-    },
-    {
-      label: "Profile",
-      onClick: () => {
-        history.push("/");
-        setAnchorEl(null);
-      },
-      icon: <AccountBoxSharp />,
-    },
-    {
-      label: "View Time Card",
-      onClick: () => {
-        history.push("/view-time-card");
-        setAnchorEl(null);
-      },
-      icon: <ScheduleSharp />,
-    },
-    {
-      label: "Logout",
-      onClick: () => {
-        auth.logoutUser(user);
-        setAnchorEl(null);
-      },
-      icon: <MeetingRoomSharp />,
-    },
-  ];
+  const styles = useStyles();
 
   return (
     <>
-      <IconButton
-        edge="end"
-        aria-label="profile"
-        color="inherit"
-        aria-controls="user-menu"
-        aria-haspopup="true"
-        onClick={(e) => setAnchorEl(e.currentTarget)}
+      <Button
+        startIcon={<AccountBoxSharp />}
+        variant="contained"
+        className={styles.btn}
+        onClick={() => history.push("/")}
       >
-        <FaceSharp style={{ color: "Green", fontSize: 24 }} />
-      </IconButton>
-      <Menu
-        id="user-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
-      />
-      <Menu
-        id="user-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
+        Profile
+      </Button>
+      <Button
+        startIcon={<ScheduleSharp />}
+        variant="contained"
+        className={[styles.btn, styles.btnMargin].join(" ")}
+        onClick={() => history.push("/view-time-card")}
       >
-        {menuItems.map(({ onClick = () => {}, label, icon = null }) =>
-          label === "divider" ? (
-            <Divider key={label} />
-          ) : (
-            <MenuItem style={{ fontSize: 14 }} onClick={onClick} key={label}>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <Box marginLeft={-4}>{label}</Box>
-            </MenuItem>
-          )
-        )}
-      </Menu>
+        View Time Card
+      </Button>
+      <Button
+        startIcon={<MeetingRoomSharp />}
+        variant="contained"
+        color="secondary"
+        className={[styles.btn, styles.btnMargin, styles.btnRed].join(" ")}
+        onClick={() => auth.logoutUser(user)}
+      >
+        Logout
+      </Button>
     </>
   );
 };
