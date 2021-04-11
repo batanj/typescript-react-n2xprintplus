@@ -15,7 +15,8 @@ import PageNavigation from "../components/PageNavigation";
 import customerService from "../services/customerService";
 
 const useStyles = makeStyles({
-  btn: { borderRadius: 0 },
+  btn: { borderRadius: 0, border: "1px solid lightgray" },
+  btnPrimary: { borderColor: "darkblue" },
   icon: { color: "Grey", fontSize: 22 },
   text: {
     paddingLeft: 10,
@@ -82,7 +83,7 @@ const CustomerPage: React.FC<RouteComponentProps<MatchParams>> = ({
           <Button
             variant="contained"
             color="primary"
-            className={styles.btn}
+            className={[styles.btn, styles.btnPrimary].join(" ")}
             onClick={() =>
               props.history.push(`/customer/${customer._id}/create-new-job`)
             }
