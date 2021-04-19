@@ -1,12 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
+import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { string } from "joi";
 
 const useStyles = makeStyles({
   root: {
@@ -28,8 +31,38 @@ export interface ScanProps {
   handleComplete: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+const prices: { [type: string]: number }  = {
+  regular: 5,
+  discount: 5
+}
+
 const Scan: React.FC<ScanProps> = ({ handleSubmit, handleComplete }) => {
   const styles = useStyles();
+  const [details, setDetails] = useState({
+    copies: 0,
+    emailFee: 0,
+    total: 0
+  });
+
+  const calculateOrder = () => {
+    setDetails({...details, total: 0});
+
+    if (details.copies <= 0)
+    return toast.error("Copies must be greater than '0'", {
+      autoClose: 3000,
+    });
+
+    let cost = 0;
+    const pricing = prices.regular;
+
+    cost = details.copies * pricing;
+
+    if (details.emailFee > 0) cost += parseFloat(details.emailFee.toString());
+
+    setDetails({ ...details, total: cost });
+  }
+
+  const addOrder = () => {}
 
   return (
     <Container>
@@ -42,6 +75,12 @@ const Scan: React.FC<ScanProps> = ({ handleSubmit, handleComplete }) => {
           margin="dense"
           className={styles.root}
           InputLabelProps={{ style: { fontSize: 14 } }}
+          onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            setDetails({
+              ...details,
+              copies: e.target.value as number,
+            });
+          }}
         />
       </Grid>
       <Grid container>
@@ -55,30 +94,15 @@ const Scan: React.FC<ScanProps> = ({ handleSubmit, handleComplete }) => {
           variant="body1"
           style={{ fontWeight: "bold", paddingTop: 20 }}
         >
-          Total Amount: 0
+          Total Amount: {details.total}
         </Typography>
       </Grid>
       <Grid container>
         <Grid item sm={12} className={styles.btn}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            className={styles.button}
-          >
-            Add Job
-          </Button>
-          <Button
-            style={{ marginLeft: 20 }}
-            variant="contained"
-            color="secondary"
-            onClick={handleComplete}
-            className={styles.button}
-          >
-            Complete Order
-          </Button>
+          <CalculateAddCompleteButtons calculateOrder={calculateOrder} addOrder={addOrder} completeOrder={handleSubmit} />
         </Grid>
       </Grid>
+      <ToastContainer position="top-center" style={{ width: 550 }} />
     </Container>
   );
 };
