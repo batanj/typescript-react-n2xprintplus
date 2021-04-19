@@ -5,12 +5,12 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import CloseSharp from "@material-ui/icons/CloseSharp";
 import makeStyles from "@material-ui/styles/makeStyles";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
 
 const useStyles = makeStyles({
   root: {
@@ -68,25 +68,24 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
     layoutFee: 0,
     deliveryFee: 0,
     discount: "No",
-    manual: false,
     total: 0,
   });
 
   const calculateOrder = () => {
-    if (details.manual) {
-      if (details.width <= 0)
-        return toast.error("Width must be greater than '0'", {
-          autoClose: 3000,
-        });
-      if (details.height <= 0)
-        return toast.error("Height must be greater than '0'", {
-          autoClose: 3000,
-        });
-      if (details.copies <= 0)
-        return toast.error("Copies must be greater than '0'", {
-          autoClose: 3000,
-        });
-    }
+    setDetails({ ...details, total: 0 });
+
+    if (details.width <= 0)
+      return toast.error("Width must be greater than '0'", {
+        autoClose: 3000,
+      });
+    if (details.height <= 0)
+      return toast.error("Height must be greater than '0'", {
+        autoClose: 3000,
+      });
+    if (details.copies <= 0)
+      return toast.error("Copies must be greater than '0'", {
+        autoClose: 3000,
+      });
 
     let cost = 0;
     const pricing =
@@ -103,9 +102,9 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
       cost += parseFloat(details.deliveryFee.toString());
 
     setDetails({ ...details, total: cost });
-
-    console.log("Total:", details.total);
   };
+
+  const addOrder = () => {}
 
   return (
     <Container>
@@ -163,10 +162,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
             style={{ width: 80 }}
             value={details.width}
             onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              setDetails({
-                ...details,
-                width: e.target.value as number,
-              });
+              setDetails({ ...details, width: e.target.value as number });
             }}
           />
         </Grid>
@@ -195,10 +191,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
             style={{ width: 100 }}
             value={details.height}
             onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              setDetails({
-                ...details,
-                height: e.target.value as number,
-              });
+              setDetails({ ...details, height: e.target.value as number });
             }}
           />
         </Grid>
@@ -214,10 +207,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
             style={{ width: 120 }}
             value={details.copies}
             onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              setDetails({
-                ...details,
-                copies: e.target.value as number,
-              });
+              setDetails({ ...details, copies: e.target.value as number });
             }}
           />
         </Grid>
@@ -234,10 +224,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
           style={{ width: 200 }}
           value={details.layoutFee}
           onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-            setDetails({
-              ...details,
-              layoutFee: e.target.value as number,
-            });
+            setDetails({ ...details, layoutFee: e.target.value as number });
           }}
         />
       </Grid>
@@ -253,10 +240,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
           style={{ width: 200 }}
           value={details.deliveryFee}
           onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-            setDetails({
-              ...details,
-              deliveryFee: e.target.value as number,
-            });
+            setDetails({ ...details, deliveryFee: e.target.value as number });
           }}
         />
       </Grid>
@@ -296,26 +280,7 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
       </Grid>
       <Grid container>
         <Grid item sm={12} className={styles.btn}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              details.manual = true;
-              calculateOrder();
-            }}
-            className={styles.button}
-          >
-            Add Job
-          </Button>
-          <Button
-            style={{ marginLeft: 20 }}
-            variant="contained"
-            color="secondary"
-            onClick={handleComplete}
-            className={styles.button}
-          >
-            Complete Order
-          </Button>
+          <CalculateAddCompleteButtons calculateOrder={calculateOrder} addOrder={addOrder} completeOrder={handleSubmit} />
         </Grid>
       </Grid>
       <ToastContainer position="top-center" style={{ width: 550 }} />
