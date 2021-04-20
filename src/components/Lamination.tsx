@@ -7,8 +7,10 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
+import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles({
   root: {
@@ -37,12 +39,44 @@ export interface LaminationProps {
   handleComplete: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+const prices: { [type: string]: number }  = {
+  ls_Long: 45,
+  ls_Short: 35,
+  ls_A4: 40,
+  ls_3R: 15,
+  ls_4R: 20,
+  ls_5R: 25
+}
+
 const Lamination: React.FC<LaminationProps> = ({
   handleSubmit,
   handleComplete,
 }) => {
   const styles = useStyles();
-  const [laminateSize, setLaminateSize] = useState("Regular ID");
+  const [laminateSize, setLaminateSize] = useState("ls_Long");
+  const [details, setDetails] = useState({
+    copies: 0,
+    total: 0
+  });
+
+  const calculateOrder = () => {
+    setDetails({...details, total: 0});
+
+    if (details.copies <= 0)
+    return toast.error("Copies must be greater than '0'", {
+      autoClose: 3000,
+    });
+
+    let cost = 0;
+
+    cost = details.copies * prices[laminateSize];
+
+    setDetails({ ...details, total: cost });
+  }
+  
+  const addOrder = () => {}
+
+  const completeOrder = () => {}
 
   return (
     <Container>
@@ -58,29 +92,23 @@ const Lamination: React.FC<LaminationProps> = ({
               setLaminateSize(e.target.value as string);
             }}
           >
-            <MenuItem value="Regular ID" className={styles.select}>
-              Regular ID
-            </MenuItem>
-            <MenuItem value="3R" className={styles.select}>
-              3R
-            </MenuItem>
-            <MenuItem value="4R" className={styles.select}>
-              4R
-            </MenuItem>
-            <MenuItem value="5R" className={styles.select}>
-              5R
-            </MenuItem>
-            <MenuItem value="Short" className={styles.select}>
-              Short
-            </MenuItem>
-            <MenuItem value="Long" className={styles.select}>
+            <MenuItem value="ls_Long" className={styles.select}>
               Long
             </MenuItem>
-            <MenuItem value="A4" className={styles.select}>
+            <MenuItem value="ls_Short" className={styles.select}>
+              Short
+            </MenuItem>
+            <MenuItem value="ls_A4" className={styles.select}>
               A4
             </MenuItem>
-            <MenuItem value="A3" className={styles.select}>
-              A3
+            <MenuItem value="ls_3R" className={styles.select}>
+              3R
+            </MenuItem>
+            <MenuItem value="ls_4R" className={styles.select}>
+              4R
+            </MenuItem>
+            <MenuItem value="ls_5R" className={styles.select}>
+              5R
             </MenuItem>
           </Select>
         </FormControl>
@@ -94,6 +122,10 @@ const Lamination: React.FC<LaminationProps> = ({
           margin="dense"
           inputProps={{ min: "0", step: "1", style: { fontSize: 14 } }}
           InputLabelProps={{ style: { fontSize: 14 } }}
+          onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            setDetails({...details, copies: e.target.value as number});
+            console.log(details);
+          }}
         />
       </Grid>
       <Grid container>
@@ -101,30 +133,15 @@ const Lamination: React.FC<LaminationProps> = ({
           variant="body1"
           style={{ fontWeight: "bold", paddingTop: 20 }}
         >
-          Total Amount: 0
+          Total Amount: {details.total}
         </Typography>
       </Grid>
       <Grid container>
         <Grid item sm={12} className={styles.btn}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            className={styles.button}
-          >
-            Add Job
-          </Button>
-          <Button
-            style={{ marginLeft: 20 }}
-            variant="contained"
-            color="secondary"
-            onClick={handleComplete}
-            className={styles.button}
-          >
-            Complete Order
-          </Button>
+          <CalculateAddCompleteButtons calculateOrder={calculateOrder} addOrder={addOrder} completeOrder={completeOrder} />
         </Grid>
       </Grid>
+      <ToastContainer position="top-center" style={{ width: 550 }} />
     </Container>
   );
 };
