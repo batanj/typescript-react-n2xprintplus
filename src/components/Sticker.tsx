@@ -5,6 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
+import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles({
   root: {
@@ -71,6 +74,7 @@ const Sticker: React.FC<StickerProps> = ({ handleSubmit, handleComplete }) => {
           </Button>
         </Grid>
       </Grid>
+      <ToastContainer position="top-center" style={{ width: 550 }} />
     </Container>
   );
 };
