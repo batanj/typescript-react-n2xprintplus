@@ -15,7 +15,6 @@ import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
 import UserContext from "../contexts/UserContext";
 import authService from "../services/authService";
 import prices from "../services/priceService";
-import Price from "../types/Price";
 
 const useStyles = makeStyles({
   root: {
