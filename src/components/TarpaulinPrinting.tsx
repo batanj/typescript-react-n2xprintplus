@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
@@ -11,6 +11,11 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CalculateAddCompleteButtons from "./CalculateAddCompleteButtons";
+
+import UserContext from "../contexts/UserContext";
+import authService from "../services/authService";
+import prices from "../services/priceService";
+import Price from "../types/Price";
 
 const useStyles = makeStyles({
   root: {
@@ -38,38 +43,38 @@ export interface TarpaulinPrintingProps {
   handleComplete: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const prices: { [type: string]: { [unit: string]: number } } = {
-  regular: {
-    "Regular 10 oz": 13,
-    "Blackout 15 oz": 25,
-    Panaflex: 65,
-    "Photo Paper": 50,
-    Sticker: 50,
-  },
-  discount: {
-    "Regular 10 oz": 10,
-    "Blackout 15 oz": 22,
-    Panaflex: 60,
-    "Photo Paper": 40,
-    Sticker: 50,
-  },
-};
-
 const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
   handleSubmit,
   handleComplete,
 }) => {
+  const user = useContext(UserContext);
+
+  useEffect(() => {
+    const getPrices = async () => {
+      try {
+        const priceData = await prices.get("Tarpaulin Printing");
+        setPrice({ ...priceData.data[0].service });
+      } catch (error) {
+        authService.logoutUser(user);
+      }
+    };
+
+    getPrices();
+  }, [user]);
+
   const styles = useStyles();
+
   const [details, setDetails] = useState({
-    tarpaulinType: "Regular 10 oz",
+    tarpaulinType: "regular10oz",
     width: 0,
     height: 0,
     copies: 0,
     layoutFee: 0,
     deliveryFee: 0,
-    discount: "No",
+    discount: 0,
     total: 0,
   });
+  const [price, setPrice] = useState<{ [unit: string]: number | string }>();
 
   const calculateOrder = () => {
     setDetails({ ...details, total: 0 });
@@ -88,23 +93,23 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
       });
 
     let cost = 0;
-    const pricing =
-      details.discount === "No" ? prices.regular : prices.discount;
 
-    cost =
-      details.width *
-      details.height *
-      details.copies *
-      pricing[details.tarpaulinType];
+    if (price !== undefined) {
+      cost =
+        details.width * details.height * details.copies * (price[details.tarpaulinType] as number);
 
-    if (details.layoutFee > 0) cost += parseFloat(details.layoutFee.toString());
-    if (details.deliveryFee > 0)
-      cost += parseFloat(details.deliveryFee.toString());
+      if (details.layoutFee > 0)
+        cost += parseFloat(details.layoutFee.toString());
+      if (details.deliveryFee > 0)
+        cost += parseFloat(details.deliveryFee.toString());
+      if (details.discount > 0)
+        cost -= parseFloat(details.discount.toString());
 
-    setDetails({ ...details, total: cost });
+      setDetails({ ...details, total: cost });
+    }
   };
 
-  const addOrder = () => {}
+  const addOrder = () => {};
 
   return (
     <Container>
@@ -125,19 +130,19 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
               });
             }}
           >
-            <MenuItem value="Regular 10 oz" className={styles.select}>
+            <MenuItem value="regular10oz" className={styles.select}>
               Regular 10 oz
             </MenuItem>
-            <MenuItem value="Blackout 15 oz" className={styles.select}>
+            <MenuItem value="blackout15oz" className={styles.select}>
               Blackout 15 oz
             </MenuItem>
-            <MenuItem value="Panaflex" className={styles.select}>
+            <MenuItem value="panaflex" className={styles.select}>
               Panaflex
             </MenuItem>
-            <MenuItem value="Photo Paper" className={styles.select}>
+            <MenuItem value="photoPaper" className={styles.select}>
               Photo Paper
             </MenuItem>
-            <MenuItem value="Sticker" className={styles.select}>
+            <MenuItem value="sticker" className={styles.select}>
               Sticker
             </MenuItem>
           </Select>
@@ -244,31 +249,21 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
           }}
         />
       </Grid>
-      <Grid container style={{ marginTop: 10 }}>
-        <Typography
-          variant="body1"
-          style={{ fontWeight: "bold", marginRight: 10 }}
-        >
-          Discounted:
-        </Typography>
-        <FormControl className={styles.root}>
-          <Select
-            className={styles.select}
-            labelId="discounted"
-            id="discounted"
-            value={details.discount}
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              setDetails({ ...details, discount: e.target.value as string });
-            }}
-          >
-            <MenuItem value="No" className={styles.select}>
-              No
-            </MenuItem>
-            <MenuItem value="Yes" className={styles.select}>
-              Yes
-            </MenuItem>
-          </Select>
-        </FormControl>
+      <Grid container>
+        <TextField
+          type="number"
+          variant="outlined"
+          label="Discount"
+          inputProps={{ min: "0", step: "1", style: { fontSize: 14 } }}
+          InputLabelProps={{ style: { fontSize: 14 } }}
+          margin="dense"
+          className={styles.root}
+          style={{ width: 200 }}
+          value={details.discount}
+          onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            setDetails({ ...details, discount: e.target.value as number });
+          }}
+        />
       </Grid>
       <Grid container>
         <Typography
@@ -280,7 +275,11 @@ const TarpaulinPrinting: React.FC<TarpaulinPrintingProps> = ({
       </Grid>
       <Grid container>
         <Grid item sm={12} className={styles.btn}>
-          <CalculateAddCompleteButtons calculateOrder={calculateOrder} addOrder={addOrder} completeOrder={handleSubmit} />
+          <CalculateAddCompleteButtons
+            calculateOrder={calculateOrder}
+            addOrder={addOrder}
+            completeOrder={handleSubmit}
+          />
         </Grid>
       </Grid>
       <ToastContainer position="top-center" style={{ width: 550 }} />

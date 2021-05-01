@@ -13,12 +13,7 @@ import Typography from "@material-ui/core/Typography";
 
 import PageNavigation from "../components/PageNavigation";
 
-import Scan from "../components/Scan";
 import Sticker from "../components/Sticker";
-import Photocopy from "../components/Photocopy";
-import Lamination from "../components/Lamination";
-import TshirtPrinting from "../components/TshirtPrinting";
-import RisoDuplo from "../components/RisoDuplo";
 import TarpaulinPrinting from "../components/TarpaulinPrinting";
 
 import authService from "../services/authService";
@@ -74,7 +69,7 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
   const styles = useStyles();
   const [state, setState] = useState<job>({
     services: [],
-    service: {},
+    service: {}
   });
   const user = useContext(UserContext);
 
@@ -86,6 +81,7 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
         const service = data[0];
 
         setState({ services: data, service });
+
       } catch (error) {
         authService.logoutUser(user);
       }
@@ -122,47 +118,9 @@ const CreateNewJobPage: React.FC<RouteComponentProps> = ({ ...props }) => {
 
   const renderSwitch = (param: string) => {
     switch (param) {
-      case "scan":
-        return (
-          <Scan handleSubmit={handleSubmit} handleComplete={handleComplete} />
-        );
-
       case "sticker":
         return (
           <Sticker
-            handleSubmit={handleSubmit}
-            handleComplete={handleComplete}
-          />
-        );
-
-      case "photocopy-printing":
-        return (
-          <Photocopy
-            service={{ name: "Photocopy", slug: "photocopy" }}
-            handleSubmit={handleSubmit}
-            handleComplete={handleComplete}
-          />
-        );
-
-      case "lamination":
-        return (
-          <Lamination
-            handleSubmit={handleSubmit}
-            handleComplete={handleComplete}
-          />
-        );
-
-      case "t-shirt-printing":
-        return (
-          <TshirtPrinting
-            handleSubmit={handleSubmit}
-            handleComplete={handleComplete}
-          />
-        );
-
-      case "riso-duplo":
-        return (
-          <RisoDuplo
             handleSubmit={handleSubmit}
             handleComplete={handleComplete}
           />
